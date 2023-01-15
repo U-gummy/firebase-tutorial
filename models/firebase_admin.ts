@@ -39,7 +39,7 @@ export default class FirebaseAdmin {
     console.info('bootstrap');
   }
 
-  /** firestore를 반환 */
+  /** fire store를 반환 */
   public get Firebase(): FirebaseFirestore.Firestore {
     if (this.init === false) {
       this.bootstrap();
