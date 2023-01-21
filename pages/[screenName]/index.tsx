@@ -11,14 +11,15 @@ import {
   Switch,
   Text,
   Textarea,
-  Toast,
   useToast,
+  VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import Layout from '@/component/Layout';
 import { useAuth } from '@/contexts/auth_user.context';
 import { InAuthUser } from '@/models/in_auth_user';
+import MessageItem from '@/component/message_item';
 
 interface Props {
   userInfo: InAuthUser | null;
@@ -160,6 +161,37 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
             anonymous
           </FormLabel>
         </FormControl>
+        <VStack spacing="12px" mt="6">
+          <MessageItem
+            uid="asd"
+            displayName="nono"
+            isOwner={false}
+            item={{ id: 'asd', message: 'as!!!!!dad', createAt: '2022-01-31T20:12:55+09:00' }}
+          />
+          <MessageItem
+            uid="asd"
+            photoURL={authUser?.photoURL ?? ''}
+            displayName="qweqweqwe"
+            item={{
+              id: 'asd',
+              message: 'as!!!!!dad',
+              createAt: '2022-01-31T20:12:55+09:00',
+              reply: 'rererererere',
+              replyAt: '2022-06-31T20:12:55+09:00',
+            }}
+          />
+          <MessageItem
+            uid="asd"
+            photoURL={authUser?.photoURL ?? ''}
+            displayName="qweqweqwe"
+            isOwner
+            item={{
+              id: 'asd',
+              message: 'as!!!!!dad',
+              createAt: '2022-01-31T20:12:55+09:00',
+            }}
+          />
+        </VStack>
       </Box>
     </Layout>
   );
