@@ -60,6 +60,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
   const [message, setMessage] = useState('');
   const [isAnonymous, setAnonymous] = useState(false);
   const [messageList, setMessageList] = useState<InMessage[]>([]);
+  const [messageListFetchTrigger, setMessageListFetchTrigger] = useState(false);
 
   const toast = useToast();
   const { authUser } = useAuth();
@@ -80,11 +81,24 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
     }
   };
 
+  const fetchMessageInfo = async ({ uid, messageId }: { uid: string; messageId: string }) => {
+    try {
+      const resp = await fetch(`/api/messages.info?uid=${uid}&messageId=${messageId}`);
+      if (resp.status === 200) {
+        const data: InMessage = await resp.json();
+        const changeMessageList: InMessage[] = messageList.map((item) => (item.id === data.id ? data : item));
+        setMessageList(changeMessageList);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (!userInfo) return;
     fetchMessageList(userInfo.uid);
-  }, [userInfo]);
+  }, [userInfo, messageListFetchTrigger]);
 
   return (
     <Layout title={`${userInfo.displayName}의 홈`} minHeight="100vh" bgColor="gray.50">
@@ -155,6 +169,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
                 toast({ title: '메세지 등록 실패', position: 'bottom' });
               }
               setMessage('');
+              setMessageListFetchTrigger((prev) => !prev);
             }}
           >
             등록
@@ -190,6 +205,7 @@ const UserHomePage: NextPage<Props> = function ({ userInfo }) {
               displayName={userInfo.displayName ?? ''}
               photoURL={userInfo.photoURL ?? IMAGE_URL}
               isOwner={!!(authUser && authUser.uid === userInfo.uid)}
+              onSendComplete={() => fetchMessageInfo({ uid: userInfo.uid, messageId: messageData.id })}
             />
           ))}
         </VStack>
