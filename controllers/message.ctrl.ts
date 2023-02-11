@@ -17,14 +17,24 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function list(req: NextApiRequest, res: NextApiResponse) {
-  const { uid } = req.query;
+  const { uid, page, size } = req.query;
 
   if (!uid) {
     throw new BadReqError('uid가 누락 되었습니다.');
   }
 
+  const convertPage = page ?? '1';
+  const convertSize = size ?? '10';
+
   const uidToStr = Array.isArray(uid) ? uid[0] : uid;
-  const listResp = await MessageModal.list({ uid: uidToStr });
+  const pageToStr = Array.isArray(convertPage) ? convertPage[0] : convertPage;
+  const sizeToStr = Array.isArray(convertSize) ? convertSize[0] : convertSize;
+
+  const listResp = await MessageModal.listWithPage({
+    uid: uidToStr,
+    page: parseInt(pageToStr, 10),
+    size: parseInt(sizeToStr, 10),
+  });
   return res.status(200).json(listResp);
 }
 
